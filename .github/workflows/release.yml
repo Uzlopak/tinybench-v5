@@ -133,10 +133,16 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Generate documentation
+      - name: Install dependencies
         run: |
           pnpm install --ignore-scripts --frozen-lockfile
-          pnpm typedoc
+
+      - name: Read package.json version
+        id: package-version
+        uses: jaywcjlove/github-action-package@main
+
+      - name: Generate documentation
+        run: pnpm typedoc --gitRevision v${{ steps.package-version.outputs.version}}
 
       - name: Commit and push changes
         if: github.ref == 'refs/heads/${{ github.event.repository.default_branch }}'
